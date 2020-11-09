@@ -23,14 +23,14 @@ readline(const char *prompt)
 			if (echoing)
 				cputchar('\b');
 			i--;
-		} else if (c >= ' ' && i < BUFLEN-1) {
+		} else if (c >= ' ') {// && i < BUFLEN-1) {
 			if (echoing)
 				cputchar(c);
 			buf[i++] = c;
 		} else if (c == '\n' || c == '\r') {
 			if (echoing)
 				cputchar('\n');
-			buf[i] = 0;
+			//buf[i] = 0;
 			return buf;
 		}
 	}
