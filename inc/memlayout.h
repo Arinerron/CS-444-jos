@@ -82,7 +82,9 @@
  *     there if desired.  JOS user programs map pages temporarily at UTEMP.
  */
 
+#define KERNELADDR      0x100000
 
+// this is the kernel **VIRTUAL ADDRESS** BASE, NOOTTTTTT the kernel base address!
 // All physical memory mapped at this address
 #define	KERNBASE	0xF0000000
 

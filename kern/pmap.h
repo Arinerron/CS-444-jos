@@ -59,6 +59,7 @@ int	page_insert(pde_t *pgdir, struct PageInfo *pp, void *va, int perm);
 void	page_remove(pde_t *pgdir, void *va);
 struct PageInfo *page_lookup(pde_t *pgdir, void *va, pte_t **pte_store);
 void	page_decref(struct PageInfo *pp);
+int     set_page_perm(pde_t *pgdir, void *va, int perm);
 
 void	tlb_invalidate(pde_t *pgdir, void *va);
 
@@ -71,8 +72,8 @@ page2pa(struct PageInfo *pp)
 static inline struct PageInfo*
 pa2page(physaddr_t pa)
 {
-	if (PGNUM(pa) >= npages)
-		panic("pa2page called with invalid pa");
+	if (PGNUM(pa) >= npages) return NULL;
+		//panic("pa2page called with invalid pa");
 	return &pages[PGNUM(pa)];
 }
 
