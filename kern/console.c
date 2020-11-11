@@ -159,9 +159,7 @@ cga_init(void)
 
 
 
-static void
-cga_putc(int c)
-{
+static void cga_putc(int c) {
 	// if no attribute given, then use black on white
 	if (!(c & ~0xFF))
 		c |= 0x0700;
