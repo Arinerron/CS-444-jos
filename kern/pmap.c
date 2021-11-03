@@ -147,13 +147,15 @@ mem_init(void)
 	// to initialize all fields of each struct PageInfo to 0.
 	// Your code goes here:
 
-        int page_list_size = npages * sizeof(struct PageInfo);
+        int page_list_size = ROUNDUP(npages * sizeof(struct PageInfo), PGSIZE);
         pages = (struct PageInfo *) boot_alloc(page_list_size);
         memset(pages, 0, page_list_size);
 
 	//////////////////////////////////////////////////////////////////////
 	// Make 'envs' point to an array of size 'NENV' of 'struct Env'.
-	// LAB 3: Your code here.
+        int envs_size = ROUNDUP(NENV * sizeof(struct Env), PGSIZE);
+        envs = (struct Env *) boot_alloc(envs_size);
+        memset(envs, 0, envs_size);
 
 	//////////////////////////////////////////////////////////////////////
 	// Now that we've allocated the initial kernel data structures, we set
@@ -180,9 +182,7 @@ mem_init(void)
 	//    - pages itself -- kernel RW, user NONE
         //cprintf("Updating UPAGES perms...\n");
         physaddr_t pa_pages;
-        for (int i = 0;
-                i < ROUNDUP(npages * sizeof(struct PageInfo), PGSIZE);
-                i += PGSIZE) {
+        for (int i = 0; i < page_list_size; i += PGSIZE) {
             pa_pages = PADDR(pages) + i;
             *pgdir_walk(kern_pgdir, (void *)(UPAGES + i), PTE_P | PTE_U) = pa_pages | PTE_P | PTE_U;
             *pgdir_walk(kern_pgdir, (void *)(pages + i), PTE_P | PTE_W) = pa_pages | PTE_P | PTE_W;
@@ -194,7 +194,12 @@ mem_init(void)
 	// Permissions:
 	//    - the new image at UENVS  -- kernel R, user R
 	//    - envs itself -- kernel RW, user NONE
-	// LAB 3: Your code here.
+        physaddr_t pa_envs;
+        for (int i = 0; i < envs_size; i += PGSIZE) {
+            pa_envs = PADDR(envs) + i;
+            *pgdir_walk(kern_pgdir, (void *)(UENVS + i), PTE_P | PTE_U) = pa_envs | PTE_P | PTE_U;
+            *pgdir_walk(kern_pgdir, (void *)(envs + i), PTE_P | PTE_W) = pa_envs | PTE_P | PTE_W;
+        }
 
 	//////////////////////////////////////////////////////////////////////
 	// Use the physical memory that 'bootstack' refers to as the kernel
@@ -329,10 +334,8 @@ void page_init(void) {
         page_free_list = &pages[i];
     }
     
-    cprintf("kern_pgdir[956]=%p\n", kern_pgdir[956]); //panic("adsf");
-
     if (!page_free_list) {
-        //panic("page_init: no available free pages");
+        panic("page_init: no available free pages");
     }
 }
 

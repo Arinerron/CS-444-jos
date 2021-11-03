@@ -55,6 +55,8 @@ static const char *trapname(int trapno)
 		return excnames[trapno];
 	if (trapno == T_SYSCALL)
 		return "System call";
+        else if (trapno == T_DEFAULT)
+            return "Default";
 	return "(unknown trap)";
 }
 
@@ -76,10 +78,52 @@ trap_init(void)
      * to refer that in C code... (see the comment XYZ above)
      *
      */
-	// LAB 3: Your code here.
+    // LAB 3: Your code here.
+    void t_divide();
+    void t_debug();
+    void t_nmi();
+    void t_brkpt();
+    void t_oflow();
+    void t_bound();
+    void t_illop();
+    void t_device();
+    void t_dblflt();
+    void t_tss();
+    void t_segnp();
+    void t_stack();
+    void t_gpflt();
+    void t_pgflt();
+    void t_fperr();
+    void t_align();
+    void t_mchk();
+    void t_simderr();
+    void t_syscall();
+    void t_default();
 
-	// Per-CPU setup
-	trap_init_percpu();
+#define SETGATE_F(i, f) SETGATE(idt[(i)], 0, GD_KT, (f), 0);
+
+    SETGATE_F(T_DIVIDE, t_divide);
+    SETGATE_F(T_DEBUG, t_debug);
+    SETGATE_F(T_NMI, t_nmi);
+    SETGATE_F(T_BRKPT, t_brkpt);
+    SETGATE_F(T_OFLOW, t_oflow);
+    SETGATE_F(T_BOUND, t_bound);
+    SETGATE_F(T_ILLOP, t_illop);
+    SETGATE_F(T_DEVICE, t_device);
+    SETGATE_F(T_DBLFLT, t_dblflt);
+    SETGATE_F(T_TSS, t_tss);
+    SETGATE_F(T_SEGNP, t_segnp);
+    SETGATE_F(T_STACK, t_stack);
+    SETGATE_F(T_GPFLT, t_gpflt);
+    SETGATE_F(T_FPERR, t_fperr);
+    SETGATE_F(T_ALIGN, t_align);
+    SETGATE_F(T_MCHK, t_mchk);
+    SETGATE_F(T_SIMDERR, t_simderr);
+    SETGATE_F(T_SYSCALL, t_syscall);
+    SETGATE_F(T_DEFAULT, t_default);
+
+    // Per-CPU setup
+    trap_init_percpu();
 }
 
 // Initialize and load the per-CPU TSS and IDT
@@ -156,6 +200,7 @@ trap_dispatch(struct Trapframe *tf)
 {
 	// Handle processor exceptions.
 	// LAB 3: Your code here.
+
 
 	// Unexpected trap: The user process or the kernel has a bug.
 	print_trapframe(tf);
