@@ -534,7 +534,7 @@ env_run(struct Env *e)
 	//	e->env_tf to sensible values.
 
 	// LAB 3: Your code here.
-        assert(curenv != e);
+        //assert(curenv != e); // TODO: should this be here?
         if (curenv && curenv->env_status == ENV_RUNNING) { // any other allowed states?
             curenv->env_status = ENV_RUNNABLE;
         }
